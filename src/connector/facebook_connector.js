@@ -1,8 +1,8 @@
 const EventEmitter = require('events')
-const express = require('express')
-const bodyParser = require('body-parser')
-const logger = require('../logger')
-const _ = require('lodash')
+const express      = require('express')
+const bodyParser   = require('body-parser')
+const logger       = require('../logger')
+const _            = require('lodash')
 
 const defaultConfig = {
   host: '0.0.0.0',

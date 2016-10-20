@@ -1,10 +1,10 @@
 const EventEmitter = require('events')
-const express = require('express')
-const bodyParser = require('body-parser')
-const http = require('http')
-const socketIO = require('socket.io')
-const _ = require('lodash')
-const logger = require('../logger')
+const express      = require('express')
+const bodyParser   = require('body-parser')
+const http         = require('http')
+const socketIO     = require('socket.io')
+const _            = require('lodash')
+const logger       = require('../logger')
 
 const defaultConfig = {
   port: 8081,
