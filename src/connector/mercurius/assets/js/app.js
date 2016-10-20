@@ -41,10 +41,15 @@ var app = new Vue({
     sendMessage: function() {
       var self = this;
       $.post('/chat_room/' + this.chatRoom.id, {
-        message: this.message
+        message: this.message,
+        credentials: {
+          name: this.credentials.name,
+          email: this.credentials.email,
+        }
       }).done(function(res) {
+        console.log("chatRoomID", res.chatRoom.id)
         self.message = '';
-        self.messages.push(res);
+        self.messages.push(res.message);
       });
     }
   }

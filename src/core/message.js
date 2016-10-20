@@ -1,8 +1,9 @@
 class Message {
-  constructor({ content, name }) {
+  constructor(attrs) {
     this.name = name
     this.content = content
     this.timestamp = new Date().getTime()
+    this.attributes = attrs
   }
 
   toJSON() {

@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const EventEmitter = require('events');
-const Message = require('./message');
+const _ = require('lodash')
+const EventEmitter = require('events')
+const Message = require('./message')
 
 class ChatRoom extends EventEmitter {
   constructor(attributes) {
@@ -8,6 +8,10 @@ class ChatRoom extends EventEmitter {
     this.attributes = attributes
     this.attributes.id = this.id = _.uniqueId()
     this.messages = []
+  }
+
+  close() {
+    this.emit('close')
   }
 
   // Message sent by the user.
@@ -22,8 +26,8 @@ class ChatRoom extends EventEmitter {
     this.broadcaster = connector
   }
 
-  broadcast(content) {
-    let message = new Message({ content, name: 'Mercurius' })
+  broadcast(content, attrs = {}) {
+    let message = new Message(_.merge({ content, name: 'Mercurius' }, attrs))
     this.messages.push(message)
     this.broadcaster.sendMessageFromChatRoom(message, this)
     return message
@@ -31,6 +35,10 @@ class ChatRoom extends EventEmitter {
 
   addAttributes(attributes) {
     this.attributes = _.merge(this.attributes, attributes)
+  }
+
+  toJSON() {
+    return this.attributes
   }
 }
 

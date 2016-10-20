@@ -31,17 +31,16 @@ class MercuriusConnector extends EventEmitter {
     let chatRoomAttrs = req.body
     let chatRoom = this.registry.findOrCreate(chatRoomAttrs)
     chatRoom.setBroadcaster(this)
-    res.json(chatRoom.attributes)
+    res.json(chatRoom.toJSON())
   }
 
   onUpdateChatRoom(req, res) {
-    let chatRoom = this.registry.findOrCreate({id: req.params.id})
-    if(chatRoom) {
-      let message = chatRoom.sendMessage(req.body.message)
-      res.json(message.toJSON())
-    } else {
-      res.status(404)
-    }
+    let params = _.merge({id: req.params.id}, req.body.credentials)
+    let chatRoom = this.registry.findOrCreate(params)
+    let message = chatRoom.sendMessage(req.body.message)
+    res.json({
+      message: message.toJSON(), chatRoom: chatRoom.toJSON()
+    })
   }
 
   onSocketConnection(socket) {

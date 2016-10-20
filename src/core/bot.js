@@ -24,6 +24,10 @@ class Bot extends EventEmitter {
     chatRoom.on('message', message => {
       this.emit('message', message, chatRoom)
     })
+
+    chatRoom.on('close', () => {
+      this.emit('close', chatRoom)
+    })
   }
 }
 

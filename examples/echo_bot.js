@@ -5,6 +5,7 @@ let mercuriusConnector = new mercurius.connector.MercuriusConnector({
   port: 8081,
 });
 
+/*
 let facebookConnector = new mercurius.connector.FacebookConnector({
   appId: '',
   appSecret: '',
@@ -13,16 +14,23 @@ let facebookConnector = new mercurius.connector.FacebookConnector({
   port: 8080,
   webhookPath: '/webhook',
 });
+*/
 
 let echoBot = new mercurius.Bot({
-  connectors: [facebookConnector, mercuriusConnector],
+  connectors: [mercuriusConnector],
   pipeline: []
 })
 
 echoBot.initialize().then(bot => {
   bot.on('message', (message, chatRoom) => {
-    console.log("BOOT!!!!")
-    console.log("recebi mensagem: ", message.content)
-    chatRoom.broadcast(message.content.toUpperCase())
+    if(message.content == 'bye') {
+      chatRoom.close()
+    } else {
+      chatRoom.broadcast(message.content.toUpperCase())
+    }
+  })
+
+  bot.on('close', chatRoom => {
+    chatRoom.broadcast('See ya later!', { close : true })
   })
 })
