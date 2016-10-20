@@ -66,7 +66,7 @@
             <div class="ui comments" style="height: 160px; max-width: 100%; overflow-y: auto;">
               <div class="comment" v-for="message in messages">
                 <a class="avatar">
-                  <img src="/assets/images/default-avatar.png">
+                  <img v-bind:src="message.avatar || '/assets/images/default-avatar.png'">
                 </a>
                 <div class="content">
                   <a class="author">{{ message.name }}</a>
@@ -93,6 +93,7 @@
     </script>
 
 
+    <script src="/socket.io/socket.io.js"></script>
     <script src="/jquery/jquery-3.1.1.js"></script>
     <script src="/semantic-ui/semantic.js"></script>
     <script src="/vue/vue.js"></script>

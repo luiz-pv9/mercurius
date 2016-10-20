@@ -1,4 +1,4 @@
-const winston = require('winston');
+const winston = require('winston')
 
 module.exports = new winston.Logger({
   level: 'debug',
@@ -7,4 +7,4 @@ module.exports = new winston.Logger({
       timestamp: true
     })
   ]
-});
+})

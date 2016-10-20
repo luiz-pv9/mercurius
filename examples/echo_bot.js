@@ -17,11 +17,12 @@ let facebookConnector = new mercurius.connector.FacebookConnector({
 let echoBot = new mercurius.Bot({
   connectors: [facebookConnector, mercuriusConnector],
   pipeline: []
-});
+})
 
 echoBot.initialize().then(bot => {
   bot.on('message', (message, chatRoom) => {
     console.log("BOOT!!!!")
-    console.log("recebi mensagem: ", message.content());
-  });
-});
+    console.log("recebi mensagem: ", message.content)
+    chatRoom.broadcast(message.content.toUpperCase())
+  })
+})

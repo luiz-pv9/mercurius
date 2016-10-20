@@ -9,7 +9,7 @@ class Bot extends EventEmitter {
     this.pipeline = pipeline
     this.registry = new Registry()
 
-    this.registry.on('new:chat_room', this.onNewChatRoom.bind(this));
+    this.registry.on('new:chat_room', this.onNewChatRoom.bind(this))
   }
 
   initialize() {
@@ -22,7 +22,7 @@ class Bot extends EventEmitter {
 
   onNewChatRoom(chatRoom) {
     chatRoom.on('message', message => {
-      this.emit('message', message, chatRoom);
+      this.emit('message', message, chatRoom)
     })
   }
 }

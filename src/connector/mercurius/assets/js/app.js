@@ -1,4 +1,3 @@
-
 var app = new Vue({
   el: '#app',
   data: {
@@ -9,7 +8,8 @@ var app = new Vue({
     message: '',
     messages: [],
     chatRoom: null,
-    isChatting: false
+    isChatting: false,
+    socket: null
   },
   watch: {
     'messages': function(val) {
@@ -26,7 +26,17 @@ var app = new Vue({
       $.post('/chat_room', this.credentials).done(function(res) {
         self.chatRoom = res;
         self.isChatting = true;
+        self.socket = io.connect('http://localhost:8081');
+        console.log("listening on chat_room." + res.id);
+        self.socket.emit('subscribe', 'chat_room.' + res.id);
+        self.socket.on('message', self.onMessage.bind(this));
       });
+    },
+    onMessage: function(message) {
+      var self = this;
+      setTimeout(function() {
+        self.messages.push(message);
+      }, 200);
     },
     sendMessage: function() {
       var self = this;
