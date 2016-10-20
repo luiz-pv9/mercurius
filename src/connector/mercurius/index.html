@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/semantic-ui/semantic.css" />
+  </head>
+
+  <body style="background-color: #FFF;">
+
+    <div style="height: 2px; background-color: #55ff99; width: 100%;"></div>
+
+    <div style="padding-top: 30px; padding-bottom: 30px; margin-bottom: 20px; background: url(/assets/images/seigaiha.png); text-align: center;">
+      <img src="/assets/images/logo_mercurius.png" />
+    </div>
+
+    <div class="ui grid container" id="app">
+
+      <div class="five wide column">
+        <div class="ui piled segment" style="margin-bottom: 0;">
+          Mercurius is a service agnostic <b>bot platform</b> that allows us to quickly develop
+          chat bots with built-in integration with <i>Messenger</i>, <i>Skype</i> and <i>Telegram</i> - all
+          using the same API.
+
+          <div class="ui divider"></div>
+
+          This connector is intended to be used for development only.
+        </div>
+
+        <div class="ui vertical segment center aligned">
+          <a href="http://github.com/luiz-pv9/mercurius">
+            <i class="github icon"></i>
+            Github
+          </a>
+        </div>
+      </div>
+
+      <div class="eleven wide column">
+        <div class="ui segment">
+          <form v-on:submit.prevent="onCreateChatRoom" class="ui form" action="/chat_room" method="post" v-show="!isChatting">
+            <div class="field">
+              <label>Name</label>
+              <input v-model="credentials.name" type="text" name="name" placeholder="Maximiliano Salgado" />
+            </div>
+
+            <div class="field">
+              <label>E-mail</label>
+              <input v-model="credentials.email" type="email" name="email" placeholder="max@gmail.com" />
+            </div>
+
+            <button class="ui button" type="submit">
+              <i class="add user icon"></i>
+              Connect
+            </button>
+          </form>
+
+          <div id="chat-room" v-if="isChatting">
+            <h3 class="ui left aligned header">
+              <i class="comment outline icon"></i>
+              <div class="content">
+                Chat Room [{{ chatRoom.id }}]
+                <div class="sub header">
+                  Name: <b>{{ chatRoom.name }}</b>, E-mail: <b>{{ chatRoom.email }}</b>
+                </div>
+              </div>
+            </h3>
+
+            <div class="ui comments" style="height: 160px; max-width: 100%; overflow-y: auto;">
+              <div class="comment" v-for="message in messages">
+                <a class="avatar">
+                  <img src="/assets/images/default-avatar.png">
+                </a>
+                <div class="content">
+                  <a class="author">{{ message.name }}</a>
+                  <div class="metadata">
+                    <span class="date">{{ message.timestamp }}</span>
+                  </div>
+                  <div class="text">
+                    {{ message.content }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="ui fluid left icon input">
+              <input v-on:keyup.13="sendMessage" v-model="message" type="text" placeholder="Your message" id="chat-room-message">
+              <i class="users icon"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script id="chat-room-message-template" type="text/template">
+    </script>
+
+
+    <script src="/jquery/jquery-3.1.1.js"></script>
+    <script src="/semantic-ui/semantic.js"></script>
+    <script src="/vue/vue.js"></script>
+    <script src="/assets/js/app.js"></script>
+  </body>
+</html>
