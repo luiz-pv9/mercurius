@@ -19,8 +19,8 @@ class MercuriusConnector extends EventEmitter {
     this.app.use(bodyParser.json())
     this.app.use(bodyParser.urlencoded({ extended: true }))
     this.app.use(express.static(__dirname + '/mercurius'))
+    this.app.use(express.static(__dirname + '/assets'))
     this.app.post('/chat_room', this.onPostChatRoom.bind(this))
-    this.app.post('/chat_room/:id', this.onUpdateChatRoom.bind(this))
 
     this.server = http.Server(this.app)
     this.io = socketIO(this.server)
@@ -28,15 +28,9 @@ class MercuriusConnector extends EventEmitter {
   }
 
   onPostChatRoom(req, res) {
-    let chatRoomAttrs = req.body
-    let chatRoom = this.registry.findOrCreate(chatRoomAttrs)
-    chatRoom.setBroadcaster(this)
-    res.json(chatRoom.toJSON())
-  }
-
-  onUpdateChatRoom(req, res) {
-    let params = _.merge({id: req.params.id}, req.body.credentials)
+    let params = req.body.credentials
     let chatRoom = this.registry.findOrCreate(params)
+    chatRoom.setBroadcaster(this)
     let message = chatRoom.sendMessage(req.body.message)
     res.json({
       message: message.toJSON(), chatRoom: chatRoom.toJSON()
@@ -50,8 +44,10 @@ class MercuriusConnector extends EventEmitter {
   }
 
   sendMessageFromChatRoom(message, chatRoom) {
-    message.avatar = '/assets/images/default-avatar-catty.jpg'
-    this.io.to('chat_room.' + chatRoom.id).emit('message', message.toJSON())
+    message.attributes.avatar = '/assets/images/mercurius_m.png'
+    setTimeout(() => {
+      this.io.to('chat_room.' + chatRoom.id).emit('message', message.toJSON())
+    }, 500)
   }
 
   initialize(registry) {

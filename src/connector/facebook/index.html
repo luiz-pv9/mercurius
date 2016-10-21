@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Mercurius</title>
+    <link rel="stylesheet" href="/semantic-ui/semantic.css" />
+  </head>
+
+  <body style="background-color: #FFF;">
+
+    <div style="padding-top: 30px; padding-bottom: 30px; margin-bottom: 20px; background: url(/assets/images/seigaiha.png); text-align: center;">
+      <img src="/assets/images/logo_mercurius.png" />
+
+      <br/>
+      <i class="facebook icon button"></i>
+    </div>
+
+    <div class="ui grid container" id="app">
+      <div class="ui sixteen wide column">
+        <div class="ui segment">
+          <div class="ui left icon input">
+            <input type="text" placeholder="Search" v-model="search">
+            <i class="search icon"></i>
+          </div>
+          <button class="ui right floated button" v-on:click="isCreatingAccessToken = true">
+            <i class="plus icon"></i>
+            Access Token
+          </button>
+        </div>
+
+        <table class="ui blue celled table" v-show="!isCreatingAccessToken">
+          <thead>
+            <tr>
+              <th>Page ID</th>
+              <th>Access Token</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="page in pages">
+              <td>{{ page.id }}</td>
+              <td>{{ page.access_token }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+            <th colspan="2">
+              <div class="ui right floated">
+                Total count: {{ totalPages }}
+              </div>
+            </th>
+            </tr>
+          </tfoot>
+        </table>
+
+        <div class="ui tall stacked segment" v-show="isCreatingAccessToken">
+          <form class="ui form" action="/chat_room" method="post">
+            <div class="field">
+              <label>Page ID</label>
+              <input v-model="accessToken.pageId" type="text" name="page_id" placeholder="18571767187" />
+            </div>
+
+            <div class="field">
+              <label>Access Token</label>
+              <input v-model="accessToken.token" type="text" name="token" placeholder="JFIjamN18hur1h79c7h1bn2" />
+            </div>
+
+            <button class="ui button" v-on:click.prevent="isCreatingAccessToken = false">
+              <i class="cancel icon"></i>
+              Cancel
+            </button>
+            <button class="ui button" type="submit">
+              <i class="add icon"></i>
+              Add Access Token
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+    <script src="/jquery/jquery-3.1.1.js"></script>
+    <script src="/semantic-ui/semantic.js"></script>
+    <script src="/vue/vue.js"></script>
+    <script src="/facebook_app.js"></script>
+  </body>
+</html>

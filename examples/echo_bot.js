@@ -5,7 +5,6 @@ let mercuriusConnector = new mercurius.connector.MercuriusConnector({
   port: 8081,
 });
 
-/*
 let facebookConnector = new mercurius.connector.FacebookConnector({
   appId: '',
   appSecret: '',
@@ -13,11 +12,11 @@ let facebookConnector = new mercurius.connector.FacebookConnector({
   host: '0.0.0.0',
   port: 8080,
   webhookPath: '/webhook',
+  redis: {}
 });
-*/
 
 let echoBot = new mercurius.Bot({
-  connectors: [mercuriusConnector],
+  connectors: [mercuriusConnector, facebookConnector],
   pipeline: []
 })
 

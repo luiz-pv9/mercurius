@@ -1,18 +1,15 @@
 class Message {
   constructor(attrs) {
-    this.name = name
-    this.content = content
-    this.timestamp = new Date().getTime()
+    attrs.timestamp = new Date().getTime()
     this.attributes = attrs
   }
 
+  get content() {
+    return this.attributes.content
+  }
+
   toJSON() {
-    return {
-      content: this.content,
-      timestamp: this.timestamp,
-      name: this.name,
-      avatar: this.avatar,
-    }
+    return this.attributes
   }
 }
 

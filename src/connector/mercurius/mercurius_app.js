@@ -1,3 +1,12 @@
+Vue.filter('datetime', function(value) {
+  var date = new Date(+value);
+  var hour = date.getHours();
+  if(hour < 10) hour = "0" + hour;
+  var minute = date.getMinutes();
+  if(minute < 10) minute = "0" + minute;
+  return hour + ':' + minute;
+});
+
 var app = new Vue({
   el: '#app',
   data: {
@@ -9,7 +18,7 @@ var app = new Vue({
     messages: [],
     chatRoom: null,
     isChatting: false,
-    socket: null
+    socket: io.connect('http://localhost:8081')
   },
   watch: {
     'messages': function(val) {
@@ -23,14 +32,9 @@ var app = new Vue({
   methods: {
     onCreateChatRoom: function() {
       var self = this;
-      $.post('/chat_room', this.credentials).done(function(res) {
-        self.chatRoom = res;
-        self.isChatting = true;
-        self.socket = io.connect('http://localhost:8081');
-        console.log("listening on chat_room." + res.id);
-        self.socket.emit('subscribe', 'chat_room.' + res.id);
-        self.socket.on('message', self.onMessage.bind(this));
-      });
+      this.chatRoom = { name: this.credentials.name, email: this.credentials.email };
+      this.isChatting = true;
+      this.socket.on('message', self.onMessage.bind(this));
     },
     onMessage: function(message) {
       var self = this;
@@ -40,14 +44,15 @@ var app = new Vue({
     },
     sendMessage: function() {
       var self = this;
-      $.post('/chat_room/' + this.chatRoom.id, {
+      $.post('/chat_room', {
         message: this.message,
         credentials: {
           name: this.credentials.name,
           email: this.credentials.email,
         }
       }).done(function(res) {
-        console.log("chatRoomID", res.chatRoom.id)
+        self.chatRoom.id = res.chatRoom.id;
+        self.socket.emit('subscribe', 'chat_room.' + res.chatRoom.id);
         self.message = '';
         self.messages.push(res.message);
       });
