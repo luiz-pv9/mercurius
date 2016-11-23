@@ -15,6 +15,7 @@ class FacebookConnector extends EventEmitter {
   constructor(config) {
     super();
     this.config = _.merge(config, defaultConfig)
+    this.redis = null
     this.app = express()
     this.app.use(bodyParser.json())
     this.app.use(bodyParser.urlencoded({ extended: true }))
@@ -44,24 +45,26 @@ class FacebookConnector extends EventEmitter {
   }
 
   onGetAccessTokens(req, res) {
-    var stream = this.redis.scanStream({
-      match: 'facebook_pages.*',
-      count: 100
-    });
-    var keys = [];
-    stream.on('data', function (resultKeys) {
-      // `resultKeys` is an array of strings representing key names
-      for (var i = 0; i < resultKeys.length; i++) {
-        keys.push(resultKeys[i]);
-      }
-    });
-    stream.on('end', function () {
-      console.log('done with the keys: ', keys);
-      res.json(result)
-    });
+    var take = 10
+    var page = (req.query.page || 0) * take
+    var response = {}
+    this.redis.zrange('facebook_pages.index', page, take, 'withscores')
+    .then(records => {
+      return this.fetchFacebookPages()
+      response.records = records
+      return this.redis.zcount('facebook_pages.index', '-inf', '+inf')
+    })
+    .then(total => {
+      response.total = total
+      res.json(response)
+    })
   }
 
   onPostAccessTokens(req, res) {
+    var accessToken = req.body;
+    this.redis.hmset(`facebook_pages:${accessToken.pageId}`, accessToken)
+    this.redis.zadd('facebook_pages.index', +accessToken.pageId, accessToken.name)
+    res.json(accessToken)
   }
 
   initialize(registry) {

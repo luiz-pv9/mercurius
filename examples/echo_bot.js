@@ -30,6 +30,6 @@ echoBot.initialize().then(bot => {
   })
 
   bot.on('close', chatRoom => {
-    chatRoom.broadcast('See ya later!', { close : true })
+    chatRoom.broadcast('See ya later!')
   })
 })

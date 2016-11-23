@@ -59,7 +59,7 @@
         </table>
 
         <div class="ui tall stacked segment" v-show="isCreatingAccessToken">
-          <form class="ui form" action="/chat_room" method="post">
+          <form class="ui form" v-on:submit.prevent="onCreateAccessToken" method="post">
             <div class="field">
               <label>Page ID</label>
               <input v-model="accessToken.pageId" type="text" name="page_id" placeholder="18571767187" />
@@ -68,6 +68,11 @@
             <div class="field">
               <label>Access Token</label>
               <input v-model="accessToken.token" type="text" name="token" placeholder="JFIjamN18hur1h79c7h1bn2" />
+            </div>
+
+            <div class="field">
+              <label>Page name</label>
+              <input v-model="accessToken.name" type="text" name="name" placeholder="Flowcards" />
             </div>
 
             <button class="ui button" v-on:click.prevent="isCreatingAccessToken = false">
