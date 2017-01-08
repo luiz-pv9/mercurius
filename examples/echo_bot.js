@@ -22,7 +22,7 @@ let echoBot = new mercurius.Bot({
 
 echoBot.initialize().then(bot => {
   bot.on('message', (message, chatRoom) => {
-    if(message.content == 'bye') {
+    if(message.content === 'bye') {
       chatRoom.close()
     } else {
       chatRoom.broadcast(message.content.toUpperCase())

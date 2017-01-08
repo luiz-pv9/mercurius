@@ -4,23 +4,34 @@ new Vue({
     search: '',
     pages: [],
     totalPages: 0,
+    currentPage: 0,
     isCreatingAccessToken: false,
     accessToken: {}
   },
   created: function() {
-    $.get('/access_tokens').done(function(accessTokens) {
-      console.log("accessTokens", accessTokens);
-    })
+    this.loadAccessTokens();
   },
   methods: {
     loadAccessTokens: function() {
-      $.get('/access_tokens').done(function(accessTokens) {
-        console.log("accessTokens", accessTokens);
-      });
+      var self = this;
+      $.get('/access_tokens?page=' + this.currentPage).done(function(res) {
+        self.pages = res.records;
+        self.totalPages = res.total;
+      })
+    },
+    goToNextPage: function() {
+      console.log("what???");
+      this.currentPage += 1;
+      this.loadAccessTokens();
+    },
+    goToPreviousPage: function() {
+      this.currentPage -= 1;
+      this.loadAccessTokens();
     },
     onCreateAccessToken: function() {
       var self = this;
       $.post('/access_tokens', this.accessToken, function() {
+        self.isCreatingAccessToken = false;
         self.loadAccessTokens();
       });
     }

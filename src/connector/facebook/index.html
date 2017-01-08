@@ -25,7 +25,7 @@
       <div class="ui sixteen wide column">
         <div class="ui segment">
           <div class="ui left icon input">
-            <input type="text" placeholder="Search" v-model="search">
+            <input type="text" placeholder="Search" v-model="search" disabled>
             <i class="search icon"></i>
           </div>
           <button class="ui right floated button" v-on:click="isCreatingAccessToken = true">
@@ -37,21 +37,35 @@
         <table class="ui blue celled table" v-show="!isCreatingAccessToken">
           <thead>
             <tr>
+              <th>Name</th>
               <th>Page ID</th>
               <th>Access Token</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="page in pages">
-              <td>{{ page.id }}</td>
-              <td>{{ page.access_token }}</td>
+              <td>{{ page.name }}</td>
+              <td>{{ page.pageId }}</td>
+              <td>{{ page.token }}</td>
             </tr>
           </tbody>
           <tfoot>
             <tr>
-            <th colspan="2">
-              <div class="ui right floated">
-                Total count: {{ totalPages }}
+            <th colspan="3">
+              <div style="float: left;">
+                <b>Total count</b>: {{ totalPages }}
+              </div>
+
+              <div style="float: right;">
+                <button class="ui labeled icon button" @click="goToPreviousPage()">
+                  <i class="arrow left icon"></i>
+                  Previous
+                </button>
+
+                <button class="ui right labeled icon button" @click="goToNextPage()">
+                  <i class="arrow right icon"></i>
+                  Next
+                </button>
               </div>
             </th>
             </tr>

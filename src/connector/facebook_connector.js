@@ -45,12 +45,14 @@ class FacebookConnector extends EventEmitter {
   }
 
   onGetAccessTokens(req, res) {
-    var take = 10
-    var page = (req.query.page || 0) * take
-    var response = {}
+    let take = 1
+    let page = (+req.query.page || 0) * take
+    let response = {}
     this.redis.zrange('facebook_pages.index', page, take, 'withscores')
     .then(records => {
-      return this.fetchFacebookPages()
+      return this.fetchFacebookPages(records)
+    })
+    .then(records => {
       response.records = records
       return this.redis.zcount('facebook_pages.index', '-inf', '+inf')
     })
@@ -60,10 +62,36 @@ class FacebookConnector extends EventEmitter {
     })
   }
 
+  fetchFacebookPages(records) {
+    return new Promise((resolve, reject) => {
+      let fetchPipeline = this.redis.pipeline()
+
+      records.filter((item, index) => {
+        return index % 2 !== 0
+      }).forEach(pageId => {
+        fetchPipeline.hgetall(`facebook_pages:${pageId}`)
+      })
+
+      fetchPipeline.exec((err, results) => {
+        if(err) return reject(err)
+
+        results = results.map(record => {
+          return record[1]
+        })
+
+        resolve(results)
+      })
+    })
+  }
+
   onPostAccessTokens(req, res) {
     var accessToken = req.body;
     this.redis.hmset(`facebook_pages:${accessToken.pageId}`, accessToken)
-    this.redis.zadd('facebook_pages.index', +accessToken.pageId, accessToken.name)
+
+
+    let indexId = parseInt(accessToken.pageId) || 0
+
+    this.redis.zadd('facebook_pages.index', indexId, accessToken.name)
     res.json(accessToken)
   }
 
