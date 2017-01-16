@@ -6,8 +6,8 @@ let mercuriusConnector = new mercurius.connector.MercuriusConnector({
 });
 
 let facebookConnector = new mercurius.connector.FacebookConnector({
-  appId: '',
-  appSecret: '',
+  appId: '325334607844121',
+  appSecret: 'c0aec247b32e5b77c445a3886985cf22',
   validationToken: 'godzilla',
   host: '0.0.0.0',
   port: 8080,

@@ -29,13 +29,13 @@ class Registry extends EventEmitter {
 
   findOrCreate(searchAttributes) {
     let chatRoom = this.chatRooms.find(chatRoom => {
-      return _.isMatch(chatRoom.attributes, searchAttributes)
-    })
+      return _.isMatch(chatRoom.attributes, searchAttributes);
+    });
 
     if(chatRoom) {
-      return chatRoom
+      return chatRoom;
     } else {
-      return this.createChatRoom(searchAttributes)
+      return this.createChatRoom(searchAttributes);
     }
   }
 }

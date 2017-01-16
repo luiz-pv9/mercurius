@@ -4,6 +4,7 @@ const bodyParser   = require('body-parser')
 const logger       = require('../logger')
 const _            = require('lodash')
 const Redis        = require('ioredis')
+const request      = require('request');
 
 const defaultConfig = {
   host: '0.0.0.0',
@@ -39,9 +40,73 @@ class FacebookConnector extends EventEmitter {
     }
   }
 
+  fetchProfileDataById(id, accessToken) {
+    return new Promise((resolve, reject) => {
+      const params = `fields=first_name,last_name&access_token=${accessToken}`;
+      const url = `https://graph.facebook.com/v2.8/${id}?${params}`;
+
+      request.get(url, (err, response, body) => {
+        resolve(body);
+      });
+    });
+  }
+
+  fetchPageAccessToken(pageId) {
+    return this.redis.hgetall(`facebook_pages:${pageId}`)
+      .then(record => {
+        return record.token;
+      });
+  }
+
+  // Notify mercurius bot
   onPostWebhook(req, res) {
-    logger.info(`Facebook new data`, req.body)
-    res.end('ok')
+    let facebookOnMessageData = req.body;
+    let entries = facebookOnMessageData.entry;
+
+    entries.forEach(entry => {
+      entry.messaging.forEach(message => {
+
+        if(!message.message) return;
+        if(message.message.is_echo) return;
+
+        const senderId = message.sender.id;
+        const pageId = message.recipient.id;
+        const messageText = message.message.text;
+
+        this.fetchPageAccessToken(pageId).then(accessToken => {
+          this.fetchProfileDataById(senderId, accessToken).then(profile => {
+            const chatRoom = this.registry.findOrCreate({ senderId, pageId });
+            chatRoom.setBroadcaster(this);
+            chatRoom.setProperties({ profile, accessToken });
+            chatRoom.sendMessage(messageText);
+          });
+        });
+      });
+    });
+
+    res.end('ok');
+  }
+
+  // Send message from the bot to facebook.
+  sendMessageFromChatRoom(message, chatRoom) {
+    const params = `access_token=${chatRoom.properties.accessToken}`;
+    const uri = `https://graph.facebook.com/v2.8/me/messages?${params}`;
+    const postData = {
+      recipient: {
+        id: chatRoom.attributes.senderId
+      },
+      message: {
+        text: message.content
+      }
+    };
+
+    request({
+      method: 'POST',
+      uri,
+      json: postData,
+    }, (err, response, body) => {
+      // console.log("body", body);
+    });
   }
 
   onGetAccessTokens(req, res) {
@@ -87,7 +152,6 @@ class FacebookConnector extends EventEmitter {
   onPostAccessTokens(req, res) {
     var accessToken = req.body;
     this.redis.hmset(`facebook_pages:${accessToken.pageId}`, accessToken)
-
 
     let indexId = parseInt(accessToken.pageId) || 0
 

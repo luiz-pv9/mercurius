@@ -28,13 +28,13 @@ class MercuriusConnector extends EventEmitter {
   }
 
   onPostChatRoom(req, res) {
-    let params = req.body.credentials
-    let chatRoom = this.registry.findOrCreate(params)
-    chatRoom.setBroadcaster(this)
-    let message = chatRoom.sendMessage(req.body.message)
+    let params = req.body.credentials;
+    let chatRoom = this.registry.findOrCreate(params);
+    chatRoom.setBroadcaster(this);
+    let message = chatRoom.sendMessage(req.body.message);
     res.json({
       message: message.toJSON(), chatRoom: chatRoom.toJSON()
-    })
+    });
   }
 
   onSocketConnection(socket) {

@@ -5,9 +5,10 @@ const Message = require('./message')
 class ChatRoom extends EventEmitter {
   constructor(attributes) {
     super()
-    this.attributes = attributes
-    this.attributes.id = this.id = _.uniqueId()
-    this.messages = []
+    this.attributes = attributes;
+    this.attributes.id = this.id = _.uniqueId();
+    this.properties = {};
+    this.messages = [];
   }
 
   close() {
@@ -35,6 +36,10 @@ class ChatRoom extends EventEmitter {
 
   addAttributes(attributes) {
     this.attributes = _.merge(this.attributes, attributes)
+  }
+
+  setProperties(properties) {
+    this.properties = properties;
   }
 
   toJSON() {
